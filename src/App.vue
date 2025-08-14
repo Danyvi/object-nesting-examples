@@ -46,6 +46,18 @@ const {
 
 console.log(users.value, "usersApiResponse");
 
+/**
+If you work through this file top to bottom, you’ll see exactly how:
+
+getAtPath safely navigates nested fields.
+
+groupByPath organizes data into a Map.
+
+filterBy applies flexible conditions.
+
+filtered and grouped combine these tools to shape your data for Vue rendering.
+ */
+
 // ---- utilities: safe getter + grouping/filtering ----
 
 /**

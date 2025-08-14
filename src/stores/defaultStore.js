@@ -43,6 +43,26 @@ export const useDefaultStore = defineStore('defaultStore', () => {
         catchPhrase: "Proactive didactic contingency",
         bs: "synergize scalable supply-chains"
       }
+    },
+    {
+      id: 3,
+      name: "Clementine Bauch",
+      username: "Samantha",
+      email: "Nathan@yesenia.net",
+      address: {
+        street: "Douglas Extension",
+        suite: "Suite 8470",
+        city: "South Elvis",
+        zipcode: "51902-6430",
+        geo: { lat: "-14.3990", lng: "-120.7896" }
+      },
+      phone: "1-463-123-4447",
+      website: "ramiro.info",
+      company: {
+        name: "Romaguera-Jacobson",
+        catchPhrase: "Multi-layered client-server neural-net",
+        bs: "transition on uhd-mgmt"
+      }
     }
   ])
 

@@ -1,5 +1,6 @@
 <template>
   <section class="container">
+    <!-- Controls for grouping and filtering -->
     <div class="controls">
       <label>
         <span>Group by:</span>
@@ -15,6 +16,7 @@
       </label>
     </div>
 
+    <!-- Render groups -->
     <ul class="group-list">
       <li v-for="[key, items] in Array.from(grouped)" :key="key" class="group">
         <div class="group-header">
@@ -45,59 +47,47 @@ const {
 console.log(users.value, "usersApiResponse");
 
 // ---- utilities: safe getter + grouping/filtering ----
+
 /**
- * Safe nested access: getAtPath(obj, "a.b.c")
- * avoids “cannot read property of undefined.”
- * In real apps, consider caching compiled paths for speed if hot.
- *
- * EXAMPLE
- *
- * const user = { address: { city: "Tokyo" } }
- * getAtPath(user, "address.city") // → "Tokyo"
- * getAtPath(user, "company.name") // → undefined (safe, no error)
- */
+ ------------------------------------------------
+ getAtPath(obj, path)
+------------------------------------------------
+ Safely read a nested property using a string path.
+ Example: getAtPath(user, "address.city") → "Tokyo"
+ If any level is missing, returns undefined (no error).
+*/
+
 function getAtPath(obj, path) {
-  // Take the string path like "address.city" and split it into an array: ["address", "city"]
   return path
-    .split('.')
-    // Use reduce to go step-by-step deeper into the object
+    .split('.') // turn "address.city" into ["address", "city"]
     .reduce((acc, key) => {
-      // If acc is NOT null/undefined, go one level deeper: acc[key]
-      // If acc is null/undefined, stop and return undefined
+      // acc is the current nested object/value
+      // If acc exists, move one step deeper with acc[key]
+      // If acc is null/undefined, stay undefined (safe access)
       return acc && acc[key]
-    }, obj) // Start with the original object
+    }, obj) // Start from the whole object
 }
 
 
 /**
- * Example
- * const users = [
-  { name: "A", address: { city: "Tokyo" } },
-  { name: "B", address: { city: "Osaka" } },
-  { name: "C", address: { city: "Tokyo" } }
-]
-
-
-groupByPath(users, "address.city")
-// → Map {
-//   "Tokyo" => [ { name: "A", ...}, { name: "C", ...} ],
-//   "Osaka" => [ { name: "B", ...} ]
-// }
+------------------------------------------------
+ groupByPath(items, path)
+------------------------------------------------
+ Group an array of objects by the value of a nested property.
+ Example: groupByPath(users, "address.city") → Map { "Tokyo" => [...], "Osaka" => [...] }
 
  */
 function groupByPath(items, path) {
-  // Create a Map to store groups (key = group name, value = array of items in that group)
-  const out = new Map()
+  const out = new Map() // Map to store groups: key = group name, value = array of objects
 
-  // Loop over each object in the items array
   for (const item of items) {
-    // Get the value of the nested property (example: "address.city")
+    // Get the value of the nested property
     const rawKey = getAtPath(item, path)
 
-    // If value is null or undefined, use "—" as a placeholder key
+    // If value is null or undefined, use a placeholder key "—"
     const key = rawKey == null ? '—' : String(rawKey)
 
-    // If we don't yet have an array for this key in the Map, create one
+    // If the group doesn't exist yet, create an empty array for it
     if (!out.has(key)) {
       out.set(key, [])
     }
@@ -106,79 +96,70 @@ function groupByPath(items, path) {
     out.get(key).push(item)
   }
 
-  // Return the Map containing all groups
-  return out
+  return out // Map of groups
 }
 
 
 /**
- *
- Example 1 — exact value filter
-
- const users = [
-  { name: "A", address: { city: "Tokyo" } },
-  { name: "B", address: { city: "Osaka" } }
-]
-
-// Only keep users whose city is "Tokyo"
-filterBy(users, { "address.city": "Tokyo" })
-// → [ { name: "A", address: { city: "Tokyo" } } ]
-
-Example 2 — function filter
-
-// Only keep users whose city starts with "O"
-filterBy(users, { "address.city": (v) => v.startsWith("O") })
-// → [ { name: "B", address: { city: "Osaka" } } ]
+------------------------------------------------
+ filterBy(items, spec)
+------------------------------------------------
+ Filter an array of objects based on one or more conditions.
+ spec is an object where:
+   - key = nested path (e.g., "address.city")
+   - value = exact match value OR a function that returns true/false
 
  */
 function filterBy(items, spec) {
-  // Convert the spec object into an array of [path, test] pairs
-  // Example: { "address.city": "Tokyo", "company.name": (v)=>v.startsWith("D") }
-  // becomes [ ["address.city", "Tokyo"], ["company.name", function...] ]
+  // Turn the spec object into an array of [path, test] pairs
   const entries = Object.entries(spec)
 
-  // Return a new array containing only items that match all conditions in spec
+  // Keep only the items that match ALL conditions in the spec
   return items.filter((it) =>
-    // Check every [path, test] pair for the current item
     entries.every(([path, test]) => {
-      // Get the value at the nested path (e.g., "address.city") for the current item
+      // Get the value at the given nested path
       const val = getAtPath(it, path)
 
-      // If test is a function, call it with the value (true means match)
-      // If test is NOT a function, compare the value directly (strict equality)
-      return typeof test === 'function'
-        ? test(val)
-        : val === test
+      // If test is a function, call it with the value
+      // If test is not a function, check exact equality
+      return typeof test === 'function' ? test(val) : val === test
     })
   )
 }
 
 
 // ---- reactive controls ----
-const groupPath = ref('company.name')
-const cityFilter = ref('')
+const groupPath = ref('company.name') // default grouping: company name
+const cityFilter = ref('') // empty means no filter
 
 // ---- derived data ----
-// A computed property that returns only the users matching the city filter
+/**
+ ------------------------------------------------
+ Computed: filtered
+------------------------------------------------
+ Returns only the users whose city matches the filter text (case-insensitive).
+ If no filter text, returns all users.
+ */
 const filtered = computed(() => {
-  // Start with all users
-  const base = users.value
+  const base = users.value // start with all users
 
-  // If no filter text is entered, return all users unchanged
+  // If no city filter text, return all users
   if (!cityFilter.value) return base
 
-  // Otherwise, filter users by city
-  // The filter spec says: "address.city" must include the text in cityFilter (case-insensitive)
+  // Filter users by city, using filterBy with a function condition
   return filterBy(base, {
     'address.city': (v) =>
-      // v is the city string (e.g., "Tokyo")
-      // Convert both city and filter text to lowercase for case-insensitive match
       (v || '').toLowerCase().includes(cityFilter.value.toLowerCase())
   })
 })
 
 
-// A computed property that groups the filtered users by the selected group path
+/**
+------------------------------------------------
+ Computed: grouped
+------------------------------------------------
+ Groups the filtered users by the selected path (e.g., company.name or address.city)
+ */
 const grouped = computed(() => {
   // Take the filtered users and group them by the value of groupPath
   // Example: if groupPath is "company.name", it will group users by their company name
@@ -188,6 +169,12 @@ const grouped = computed(() => {
 
 
 // optional: counts per group (also computed)
+/**
+------------------------------------------------
+ Computed: counts
+------------------------------------------------
+ A quick helper to see how many items are in each group.
+ */
 const counts = computed(() => {
   const out = {}
   for (const [k, arr] of grouped.value) out[k] = arr.length

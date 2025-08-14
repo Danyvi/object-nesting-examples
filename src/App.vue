@@ -1,12 +1,25 @@
 <template>
   <h1>You did it!</h1>
   <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
+    {{count}}
   </p>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref, computed } from 'vue'
+import { useDefaultStore } from '@/stores/defaultStore.js'
+import { storeToRefs } from 'pinia'
+
+const defaultStore = useDefaultStore()
+
+const {
+  count
+} = storeToRefs(defaultStore)
+
+console.log(count.value, "default");
+
+</script>
 
 
 <style scoped></style>
+

@@ -1,0 +1,66 @@
+# How Our Magic Cards Work (App.vue + RecursiveCard.vue)
+
+## 1. The Big Idea
+We have some **data** (kind of like a big box of LEGO bricks).
+The data can have **simple pieces** (like one LEGO brick) or **bigger builds** (LEGO castles made
+from smaller LEGO bricks).
+We want to **show this data** as **cards**
+each card has a **title** and **whats inside**.
+But heres the trick:
+If a cards inside is *another build*, we need to **open it up** and put **more cards inside it**.
+Thats why we call our card **Recursive** because it can open itself to show more of itself!
+
+---
+
+## 2. App.vue The Starter
+`App.vue` is like the **game master**.
+It says:
+1. **Hey RecursiveCard, heres the very first big box of data start showing it!**
+2. We give it a title like `"Root"` (which means start here).
+3. After that, RecursiveCard does *all the work*.
+In short:
+App.vue is just the **door** to the card system
+
+---
+
+## 3. RecursiveCard.vue The Magic Card
+This is the **real magician**.
+It looks at the data its given and asks:
+### Step 1 Is it **just a simple thing**?
+- If yes, it just shows the value.
+ Example: `"Email body"` just gets printed.
+### Step 2 Is it an **object**? (like a treasure chest with named items inside)
+- Look inside the chest:
+ - If it has **simple things** write them down as `name: value`.
+ - If it has **more treasure chests** or **lists** make a **new RecursiveCard** for each of them.
+### Step 3 Is it an **array/list**? (like a row of toy boxes)
+- Look at each item in the list:
+ - If its simple show it directly.
+ - If its another chest or list make a **new RecursiveCard**.
+
+---
+
+## 4. Why Recursive?
+Because the **same card component** can call itself again and again, like mirrors facing each other.
+This way, no matter how **deep** the data goes, our cards can keep going until everything is
+shown.
+Example:
+Losses 2022
+ totals
+ total_incurred: $1,000,000
+ total_paid: $500,000
+ losses
+ Item 1 claimant_name: Jane Doe, ...
+ Item 2 claimant_name: John Doe, ...
+
+---
+
+## 5. Summary
+- **App.vue**: Starts the process by giving the top-level data to the card.
+- **RecursiveCard.vue**:
+ 1. If its simple show it.
+ 2. If its an object show key-value pairs or open more cards.
+ 3. If its an array show each item (and if its complex, open more cards).
+Its like opening **mystery boxes**
+each box might have candy (simple),
+or more mystery boxes (complex) and we keep opening until we find all the candy.

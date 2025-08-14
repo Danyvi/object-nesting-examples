@@ -1,7 +1,7 @@
 <template>
-  <h1>You did it!</h1>
+  <h1>API Response</h1>
   <p>
-    {{count}}
+    {{usersApiResponse}}
   </p>
 </template>
 
@@ -13,10 +13,10 @@ import { storeToRefs } from 'pinia'
 const defaultStore = useDefaultStore()
 
 const {
-  count
+  usersApiResponse
 } = storeToRefs(defaultStore)
 
-console.log(count.value, "default");
+console.log(usersApiResponse.value, "usersApiResponse");
 
 </script>
 

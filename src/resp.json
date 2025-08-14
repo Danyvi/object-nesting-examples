@@ -1,0 +1,33 @@
+{
+  "response_body": {
+    "Document type": "Email body",
+    "insured": {
+      "name": "John Doe",
+      "policy_no": "1234567890",
+      "insured_no": "9876543210"
+    },
+    "Line of business": {
+      "line_of_business": "Life Insurance"
+    },
+    "Losses 2022": {
+      "totals": {
+        "total_incurred": "$1,000,000",
+        "total_paid": "$500,000"
+      },
+      "losses": [
+        {
+          "claimant_name": "Jane Doe",
+          "loss_date": "2022-12-31",
+          "total_incurred": "$500,000",
+          "total_paid":"$200,000"
+        },
+        {
+          "claimant_name": "John Doe",
+          "loss_date": "2023-12-31",
+          "total_incurred": "$730,000",
+          "total_paid":"$120,000"
+        }
+      ]
+    }
+  }
+}

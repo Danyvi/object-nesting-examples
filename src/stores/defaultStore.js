@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 export const useDefaultStore = defineStore('defaultStore', () => {
 
-  const usersApiResponse = ref([
+  const users = ref([
     {
       id: 1,
       name: "Leanne Graham",
@@ -47,7 +47,7 @@ export const useDefaultStore = defineStore('defaultStore', () => {
   ])
 
   return {
-    usersApiResponse,
+    users,
   }
 })
 

@@ -1,0 +1,50 @@
+const person = {
+  name: "Alice",
+  address: {
+    city: "Paris",
+    coordinates: {
+      lat: 48.8566,
+      lng: 2.3522,
+      details: { timezone: "CET" }
+    }
+  }
+};
+
+
+Step-by-step recursion flow
+
+Call #1 → printValues(person)
+
+Look at "name" → value "Alice" is flat → print name: Alice
+
+Look at "address" → value is object → call printValues(address)
+
+Call #2 → printValues(address)
+
+Look at "city" → value "Paris" is flat → print city: Paris
+
+Look at "coordinates" → value is object → call printValues(coordinates)
+
+Call #3 → printValues(coordinates)
+
+Look at "lat" → value 48.8566 is flat → print lat: 48.8566
+
+Look at "lng" → value 2.3522 is flat → print lng: 2.3522
+
+Look at "details" → value is object → call printValues(details)
+
+Call #4 → printValues(details)
+
+Look at "timezone" → value "CET" is flat → print timezone: CET
+
+No more properties → function ends for this call.
+
+Return flow:
+
+Call #4 ends → return to Call #3 after "details" loop.
+
+Call #3 ends → return to Call #2 after "coordinates" loop.
+
+Call #2 ends → return to Call #1 after "address" loop.
+
+Call #1 ends → recursion is complete.

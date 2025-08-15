@@ -38,7 +38,8 @@ const person = {
     city: "Paris",
     coordinates: {
       lat: 48.8566,
-      lng: 2.3522
+      lng: 2.3522,
+      details: { timezone: "CET" }
     }
   }
 };

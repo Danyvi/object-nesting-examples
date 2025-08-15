@@ -48,3 +48,28 @@ Call #3 ends → return to Call #2 after "coordinates" loop.
 Call #2 ends → return to Call #1 after "address" loop.
 
 Call #1 ends → recursion is complete.
+
+
+==============
+
+printValues(person)
+├── name: Alice          // flat value → print
+└── address              // object → go deeper
+    printValues(address)
+    ├── city: Paris      // flat value → print
+    └── coordinates      // object → go deeper
+        printValues(coordinates)
+        ├── lat: 48.8566 // flat value → print
+        ├── lng: 2.3522  // flat value → print
+        └── details      // object → go deeper
+            printValues(details)
+            └── timezone: CET // flat value → print
+
+
+How to read it:
+
+Every indent means we’ve gone one level deeper in the object.
+
+When recursion finishes one branch, it goes back up to continue the remaining branches.
+
+This is similar to Depth-First Search in tree terminology — go all the way down one path before trying the next.

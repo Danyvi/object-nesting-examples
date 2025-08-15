@@ -99,6 +99,18 @@ export const useDefaultStore = defineStore('defaultStore', () => {
     }
   }
 })
+  // const responseBody = ref({
+  //   "response_body": {
+  //     name: "Alice",
+  //     address: {
+  //       city: "Paris",
+  //       coordinates: {
+  //         lat: 48.8566,
+  //         lng: 2.3522
+  //       }
+  //     }
+  //   }
+  // });
 
   return {
     users,
